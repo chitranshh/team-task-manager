@@ -1,6 +1,12 @@
 # Team Task Manager
 
-A full-stack web application for managing team projects, tasks, and collaboration with role-based access control.
+A simple, practical app to help small teams track projects and tasks.
+
+What you get here:
+- A backend API (Node/Express + MongoDB) that handles users, projects, tasks and a dashboard.
+- A React frontend that connects to the API and gives a clean, responsive UI.
+
+I wrote this to be lightweight and easy to run locally or host on services like Render or Railway.
 
 ## ✨ Features
 
@@ -66,80 +72,107 @@ A full-stack web application for managing team projects, tasks, and collaboratio
 cd Team-Task-Manager
 ```
 
-2. **Backend Setup**
+# Team Task Manager
+
+A small, no-frills task tracker for teams. Create projects, add tasks, assign people and move tasks through simple statuses.
+
+This repo has two parts:
+- `backend/` — API built with Node + Express, uses MongoDB via Mongoose.
+- `frontend/` — React app (Create React App) that talks to the API.
+
+I kept the feature set compact so it's easy to run, understand and extend.
+
+If you want screenshots, a short demo script, or a Postman collection added here, tell me and I'll include them.
+
+---
+
+Quick start (run locally)
+
+1) Clone the repo and open it:
+
+```bash
+git clone https://github.com/chitranshh/team-task-manager.git
+cd team-task-manager
+```
+
+2) Start the backend (one terminal):
+
 ```bash
 cd backend
 npm install
-
-# Create .env file
-cat > .env << EOF
-MONGODB_URI=mongodb+srv://YOUR_USERNAME:YOUR_PASSWORD@cluster0.6gvwux3.mongodb.net/teamtaskdb
-JWT_SECRET=your_jwt_secret_key
-PORT=5001
-EOF
-
-npm start
+cp .env.example .env
+# Edit .env and add: MONGODB_URI and JWT_SECRET
+npm run dev
 ```
 
-3. **Frontend Setup** (in another terminal)
+3) Start the frontend (another terminal):
+
 ```bash
 cd frontend
 npm install
+cp .env.example .env
+# If the backend isn't on localhost:5001, set REACT_APP_API_URL in frontend .env
 npm start
 ```
 
-The app will open at `http://localhost:3000` (or next available port).
+Open the browser at the port React prints (usually http://localhost:3000).
 
-## 📖 Usage
+How the app works (short)
 
-### 1. Sign Up
-- Navigate to `/signup`
-- Enter name, email, password
-- Select role (Admin for project creation, Member for task updates)
-- Click "Signup" → redirects to login
+- Sign up as an admin user, create a project and add tasks.
+- Assign tasks to team members (optional) and change status: To Do → In Progress → Done.
+- Dashboard shows simple counts and highlights overdue tasks.
 
-### 2. Login
-- Enter email and password
-- JWT token saved to localStorage
-- Redirected to dashboard
+Useful API calls
 
-### 3. Create Project (Admin only)
-- Click "Projects" in navigation
-- Click "+ New Project"
-- Enter project name and description
-- Click "Create"
+Signup (create a user):
 
-### 4. Manage Tasks
-- From Projects page, click "View Tasks →"
-- Click "+ New Task" (admin only)
-- Enter title, description, due date
-- Optional: assign to user ID
-- Click "Create"
+```bash
+curl -X POST http://localhost:5001/api/auth/signup \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"Admin","email":"admin@test.com","password":"Admin@123","role":"admin"}'
+```
 
-### 5. Update Task Status
-- Click task status buttons: "To Do", "In Progress", "Done"
-- Status updates instantly with color change
-- Dashboard stats refresh automatically
+Login (get token):
 
-### 6. View Dashboard
-- Click "Dashboard" in navigation
-- See task statistics in colored cards
-- Overdue tasks highlighted in alert section
+```bash
+curl -X POST http://localhost:5001/api/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"admin@test.com","password":"Admin@123"}'
+```
 
-## 🔐 API Endpoints
+Create a project (admin):
 
-### Authentication
-- `POST /api/auth/signup` - Create new user
-- `POST /api/auth/login` - Get JWT token
+```bash
+curl -X POST http://localhost:5001/api/projects \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer <TOKEN>' \
+  -d '{"name":"Website Redesign","description":"Update marketing site"}'
+```
 
-### Projects
-- `GET /api/projects` - List user's projects
-- `POST /api/projects` - Create project (admin only)
+Data quick reference
 
-### Tasks
-- `GET /api/tasks/project/:projectId` - Get project tasks
-- `POST /api/tasks` - Create task (admin only)
-- `PATCH /api/tasks/:id/status` - Update task status
+- `User`: name, email, password (hashed), role
+- `Project`: name, description, createdBy, members
+- `Task`: title, description, status, dueDate, assignedTo, project
+
+Deployment notes
+
+- Deploy the backend first and set `MONGODB_URI` and `JWT_SECRET` on your host.
+- Use the backend URL as `REACT_APP_API_URL` for the frontend build.
+- See `DEPLOYMENT.md` for Render / Railway steps.
+
+Troubleshooting
+
+- If the frontend can't reach the API, check `REACT_APP_API_URL` and CORS errors in the browser console.
+- If Mongo fails to connect, verify the Atlas user, password and network access.
+
+Want improvements?
+
+- I can add screenshots, a Postman collection, or a set of simple end-to-end tests.
+- I can also add project/task edit/delete flows or member management UI if you want.
+
+Tell me which one and I'll add it.
 
 ### Dashboard
 - `GET /api/dashboard` - Get task statistics
