@@ -198,6 +198,121 @@ PORT=5001
 4. Update task status from "To Do" → "In Progress" → "Done"
 5. Check dashboard for personal task summary
 
+---
+
+## Full Project README (Human-friendly)
+
+This section is a friendly, practical guide to the project for developers, maintainers, and teammates. It walks through purpose, structure, local setup, API usage, deployment, and troubleshooting in plain language.
+
+### Purpose (in plain words)
+Team Task Manager helps small teams coordinate work: admins create projects and tasks, assign tasks to people, and everyone can update task status. The Dashboard provides a quick snapshot of progress and overdue items.
+
+### Who should use this repository
+- Developers who will run the app locally or extend it
+- DevOps or maintainers who will deploy it to a cloud host
+- Reviewers who want to understand the API and data model
+
+### Project structure (what each folder is for)
+- `backend/` — Express server, Mongoose models, and API routes. This is where authentication, project & task logic, and dashboard aggregation live.
+- `frontend/` — React single-page app (Create React App) that consumes the backend API and provides the UI.
+- `DEPLOYMENT.md` — step-by-step hosting instructions for Railway/Render (useful for production deployment).
+
+### Quick local setup (5–10 minutes)
+1. Clone the repository:
+
+```bash
+git clone https://github.com/chitranshh/team-task-manager.git
+cd team-task-manager
+```
+
+2. Start the backend (terminal A):
+
+```bash
+cd backend
+npm install
+cp .env.example .env
+# Edit .env and set MONGODB_URI and JWT_SECRET
+npm run dev
+```
+
+3. Start the frontend (terminal B):
+
+```bash
+cd frontend
+npm install
+cp .env.example .env
+# Optional: set REACT_APP_API_URL=http://localhost:5001
+npm start
+```
+
+Open the browser at the port shown by React (usually `http://localhost:3000`).
+
+### Environment variables (what to set)
+- Backend: set `MONGODB_URI`, `JWT_SECRET`, and optionally `PORT`.
+- Frontend: set `REACT_APP_API_URL` to the backend URL when deploying.
+
+### Key API endpoints and examples
+- Signup (create user):
+
+```bash
+curl -X POST http://localhost:5001/api/auth/signup \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"Admin","email":"admin@test.com","password":"Admin@123","role":"admin"}'
+```
+
+- Login (get token):
+
+```bash
+curl -X POST http://localhost:5001/api/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"admin@test.com","password":"Admin@123"}'
+```
+
+- Create project (admin):
+
+```bash
+curl -X POST http://localhost:5001/api/projects \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer <TOKEN>' \
+  -d '{"name":"Website Redesign","description":"Update marketing site"}'
+```
+
+### Data model quick reference
+- `User`: `{ name, email, password (hashed), role }`
+- `Project`: `{ name, description, createdBy, members }`
+- `Task`: `{ title, description, status, dueDate, assignedTo, project }`
+
+### Deployment summary
+1. Deploy backend first (Railway/Render). Set `MONGODB_URI` and `JWT_SECRET` in the host environment.
+2. Note the public backend URL.
+3. Deploy frontend as a static site or web service. Set `REACT_APP_API_URL` to the backend URL.
+4. Test end-to-end (signup, login, create project and tasks, update status, check dashboard).
+
+Detailed instructions are in `DEPLOYMENT.md`.
+
+### Troubleshooting (common problems)
+- 404 on backend root: normal; API routes are under `/api/*`.
+- Frontend cannot reach backend: check `REACT_APP_API_URL` and CORS settings.
+- MongoDB connection errors: verify connection string and Atlas network access.
+
+### Next improvements you can add
+- Project and task edit/delete with confirmations
+- Member management UI (add/remove members)
+- Automated tests and CI
+- Better error handling and validation in the UI
+
+### Contributing
+If you'd like to contribute, open a fork, work on a branch, and make a pull request. Feel free to ask for an issue or a small task to get started.
+
+---
+
+If you want, I can also generate:
+- A short Postman collection of key API calls
+- Minimal end-to-end test scripts (Playwright or Cypress)
+- A short demo script with screenshots
+
+Tell me which one you'd like next and I'll prepare it.
+
 ## 🐛 Troubleshooting
 
 **Backend won't start**
