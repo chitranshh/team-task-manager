@@ -19,8 +19,12 @@ router.post('/', authenticate, authorizeRole('admin'), async (req, res) => {
 // Get all projects for user
 router.get('/', authenticate, async (req, res) => {
     try {
-        // Show all projects to all authenticated users for team collaboration
-        const projects = await Project.find({});
+        const projects = await Project.find({
+            $or: [
+                { createdBy: req.user.id },
+                { members: req.user.id },
+            ],
+        });
         res.json(projects);
     } catch (err) {
         res.status(400).json({ error: err.message });
