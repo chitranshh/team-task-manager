@@ -86,8 +86,21 @@ export default function Projects() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
                     {projects.map(p => (
                         <div key={p._id} className="card" style={{ cursor: 'pointer', transition: 'all 0.2s', borderLeft: '4px solid #3b82f6' }}>
-                            <h3>{p.name}</h3>
-                            <p style={{ color: '#6b7280', fontSize: '14px', margin: '8px 0' }}>{p.description}</p>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+                                <div style={{ flex: 1 }}>
+                                    <h3>{p.name}</h3>
+                                    <p style={{ color: '#6b7280', fontSize: '14px', margin: '8px 0' }}>{p.description}</p>
+                                </div>
+                                {user?.role === 'admin' && (
+                                    <button 
+                                        onClick={() => navigate(`/project-settings/${p._id}`)} 
+                                        style={{ padding: '4px 8px', background: '#6b7280', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', marginLeft: '8px' }}
+                                        title="Project Settings"
+                                    >
+                                        ⚙️
+                                    </button>
+                                )}
+                            </div>
                             <button onClick={() => navigate(`/tasks/${p._id}`)} style={{ width: '100%', marginTop: '12px' }}>
                                 View Tasks →
                             </button>
